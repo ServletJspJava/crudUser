@@ -54,8 +54,13 @@ public class UserController extends HttpServlet {
 		} else if (action.equalsIgnoreCase("listUser")) {
 			forward = LIST_USER;
 			req.setAttribute("users", dao.getAllUsers());
+		} else if (action.equalsIgnoreCase("search")) {
+			forward = LIST_USER;
+			String username = req.getParameter("username");
+			req.setAttribute("users", dao.searchUser(username));
 		} else {
 			forward = INSERT_OR_EDIT;
+			
 		}
 
 		RequestDispatcher view = req.getRequestDispatcher(forward);

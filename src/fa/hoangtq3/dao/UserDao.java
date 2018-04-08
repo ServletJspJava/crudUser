@@ -10,6 +10,7 @@
 package fa.hoangtq3.dao;
 
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -17,6 +18,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.RequestDispatcher;
 
 import fa.hoangtq3.database.DBConnection;
 import fa.hoangtq3.model.UserModel;
@@ -30,8 +32,8 @@ public class UserDao {
 
 	public void addUser(UserModel userModel) {
 		try {
-			PreparedStatement preparedStatement = connection
-					.prepareStatement("insert into users(fullname,gender,email,username,password,role) values (?, ?, ?, ? ,?,?)");
+			PreparedStatement preparedStatement = connection.prepareStatement(
+					"insert into users(fullname,gender,email,username,password,role) values (?, ?, ?, ? ,?,?)");
 			// Parameters start with 1
 			preparedStatement.setString(1, userModel.getFullname());
 			preparedStatement.setString(2, userModel.getGender());
@@ -39,9 +41,7 @@ public class UserDao {
 			preparedStatement.setString(4, userModel.getUsername());
 			preparedStatement.setString(5, userModel.getPassword());
 			preparedStatement.setString(6, userModel.getRole());
-			
-			
-			
+
 			preparedStatement.executeUpdate();
 
 		} catch (SQLException e) {
@@ -82,13 +82,13 @@ public class UserDao {
 
 		return users;
 	}
+
 	public void updateUser(UserModel userModel) {
 		try {
-			PreparedStatement preparedStatement = connection
-					.prepareStatement("update users set fullname=?, gender=?, email=?, username=?, password=?,role=?" +
-							"where idus=?");
+			PreparedStatement preparedStatement = connection.prepareStatement(
+					"update users set fullname=?, gender=?, email=?, username=?, password=?,role=?" + "where idus=?");
 			// Parameters start with 1
-			
+
 			preparedStatement.setString(1, userModel.getFullname());
 			preparedStatement.setString(2, userModel.getGender());
 			preparedStatement.setString(3, userModel.getEmail());
@@ -102,14 +102,14 @@ public class UserDao {
 			e.printStackTrace();
 		}
 	}
+
 	public UserModel getUserById(int idus) {
 		UserModel user = new UserModel();
 		try {
-			PreparedStatement preparedStatement = connection.
-					prepareStatement("select * from users where idus=?");
+			PreparedStatement preparedStatement = connection.prepareStatement("select * from users where idus=?");
 			preparedStatement.setInt(1, idus);
 			ResultSet rs = preparedStatement.executeQuery();
-			
+
 			if (rs.next()) {
 				user.setIdus(rs.getInt("idus"));
 				user.setFullname(rs.getString("fullname"));
@@ -125,5 +125,31 @@ public class UserDao {
 
 		return user;
 	}
+	
+	
+	public UserModel searchUser(String username) {
+		UserModel user = new UserModel();
+		try {
+			PreparedStatement preparedStatement = connection.prepareStatement("select * from users where username=?");
+			preparedStatement.setString(1, username);
+			ResultSet rs = preparedStatement.executeQuery();
+
+			if (rs.next()) {
+				user.setIdus(rs.getInt("idus"));
+				user.setFullname(rs.getString("fullname"));
+				user.setGender(rs.getString("gender"));
+				user.setEmail(rs.getString("email"));
+				user.setUsername(rs.getString("username"));
+				user.setPassword(rs.getString("password"));
+				user.setRole(rs.getString("role"));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return user;
+	}
+
+	
 
 }
